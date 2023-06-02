@@ -1,26 +1,51 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Board } from './components/Board';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export interface ICard {
+  id: number;
+  title: string;
 }
 
-export default App;
+export interface IBoard {
+  id: number;
+  title: string;
+  cards: ICard[];
+}
+
+const KanbanBoard: React.FC = () => {
+  const [boards, setBoards] = React.useState<IBoard[]>([
+    { id: 1, title: 'Todo', cards: [] },
+    { id: 2, title: 'In Progress', cards: [] },
+    { id: 3, title: 'Testing', cards: [] },
+    {id: 4, title: 'Done', cards: []},
+  ]);
+
+  const addCard = (boardId: number, title: string) => {
+    const newCard: ICard = {
+      id: Date.now(),
+      title: title,
+    };
+
+    const updatedBoards = boards.map((board) => {
+      if (board.id === boardId) {
+        return {
+          ...board,
+          cards: [...board.cards, newCard],
+        };
+      }
+      return board;
+    });
+
+    setBoards(updatedBoards);
+  };
+
+  return (
+    <div className="kanban-board">
+      {boards.map((board) => (
+        <Board addCardHandler={addCard} board={board}/>
+      ))}
+    </div>
+  );
+};
+
+export default KanbanBoard;
